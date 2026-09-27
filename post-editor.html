@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MyChat - Create Post</title>
+<style>
+    * { box-sizing: border-box; }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Arial, sans-serif;
+        color: white;
+        background: linear-gradient(180deg, #000000 0%, #061b18 35%, #082b35 65%, #11164d 100%);
+        background-attachment: fixed;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 30px 15px;
+    }
+
+    .editor {
+        display: flex;
+        gap: 20px;
+        max-width: 950px;
+        width: 100%;
+    }
+
+    /* ===== LEFT: IMAGE PREVIEW ===== */
+
+    .preview-panel {
+        flex: 1;
+        min-width: 0;
+        background: rgba(0,0,0,0.40);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 20px;
+        padding: 20px;
+        backdrop-filter: blur(15px);
+    }
+
+    .preview-frame {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 4 / 5;
+        background: #000;
+        border-radius: 14px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .preview-frame img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    .placeholder-text {
+        color: #8a97a0;
+        font-size: 14px;
+        text-align: center;
+        padding: 20px;
+    }
+
+    input[type="file"] {
+        margin-top: 14px;
+        color: white;
+        font-size: 13px;
+    }
+
+    /* draggable text overlay */
+    .text-overlay {
+        position: absolute;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: move;
+        padding: 4px 8px;
+        max-width: 90%;
+    }
+
+    .text-overlay-content {
+        color: white;
+        font-weight: bold;
+        font-size: 20px;
+        text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+        outline: none;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .text-overlay-remove {
+        flex-shrink: 0;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(0,0,0,0.55);
+        color: white;
+        font-size: 13px;
+        line-height: 1;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .text-overlay-remove:hover {
+        background: rgba(200,40,40,0.85);
+    }
+
+    .time-overlay {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        background: rgba(0,0,0,0.45);
+        padding: 5px 10px;
+        border-radius: 8px;
+        font-size: 13px;
+    }
+
+    .music-badge {
+        position: absolute;
+        bottom: 14px;
+        left: 14px;
+        right: 14px;
+        background: rgba(0,0,0,0.55);
+        border-radius: 10px;
+        padding: 8px 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+        overflow: hidden;
+    }
+
+    .music-badge img {
+        width: 34px;
+        height: 34px;
+        border-radius: 6px;
+        flex-shrink: 0;
+    }
+
+    .music-badge .scroll-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex: 1;
+    }
+
+    .music-toggle-btn {
+        flex-shrink: 0;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(255,255,255,0.18);
+        color: white;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    /* ===== RIGHT: TOOLS PANEL ===== */
+
+    .tools-panel {
+        width: 300px;
+        flex-shrink: 0;
+        background: rgba(0,0,0,0.40);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 20px;
+        padding: 20px;
+        backdrop-filter: blur(15px);
+    }
+
+    .tools-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 14px;
+    }
+
+    .tool-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.10);
+        color: white;
+        padding: 12px 14px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        font-size: 15px;
+        text-align: left;
+    }
+
+    .tool-btn:hover { background: rgba(255,255,255,0.14); }
+
+    .tool-icon {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        flex-shrink: 0;
+    }
+
+    .panel-section {
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .panel-section input[type="text"],
+    .panel-section textarea {
+        width: 100%;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.15);
+        background: rgba(255,255,255,0.06);
+        color: white;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .panel-section textarea { resize: vertical; min-height: 60px; }
+
+    .small-btn {
+        padding: 8px 14px;
+        border-radius: 10px;
+        border: none;
+        background: linear-gradient(90deg, #168aad, #3155c7);
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 13px;
+    }
+
+    .small-btn.secondary {
+        background: rgba(255,255,255,0.10);
+    }
+
+    /* music search results */
+    .song-result {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px;
+        border-radius: 10px;
+        margin-bottom: 6px;
+        background: rgba(255,255,255,0.05);
+    }
+
+    .song-result img {
+        width: 42px;
+        height: 42px;
+        border-radius: 6px;
+        flex-shrink: 0;
+    }
+
+    .song-info {
+        flex: 1;
+        min-width: 0;
+        font-size: 12.5px;
+    }
+
+    .song-info .title { font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .song-info .artist { color: #aeb8bd; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .status-text { font-size: 12.5px; color: #aeb8bd; margin: 6px 0; }
+
+    .lyrics-box {
+        max-height: 140px;
+        overflow-y: auto;
+        background: rgba(0,0,0,0.35);
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 12.5px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        color: #d7dfe3;
+        margin-top: 8px;
+    }
+
+    .toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+
+    .switch {
+        position: relative;
+        width: 42px;
+        height: 24px;
+        flex-shrink: 0;
+    }
+
+    .switch input { opacity: 0; width: 0; height: 0; }
+
+    .slider {
+        position: absolute;
+        inset: 0;
+        background: rgba(255,255,255,0.2);
+        border-radius: 24px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .slider::before {
+        content: "";
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        left: 3px;
+        top: 3px;
+        background: white;
+        border-radius: 50%;
+        transition: 0.2s;
+    }
+
+    .switch input:checked + .slider {
+        background: linear-gradient(90deg, #168aad, #3155c7);
+    }
+
+    .switch input:checked + .slider::before {
+        transform: translateX(18px);
+    }
+
+    .share-btn {
+        width: 100%;
+        margin-top: 16px;
+        padding: 14px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(90deg, #168aad, #3155c7);
+        color: white;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .share-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+    @media (max-width: 750px) {
+        .editor { flex-direction: column; }
+        .tools-panel { width: 100%; }
+    }
+</style>
+</head>
+<body>
+
+<div class="editor">
+
+    <!-- LEFT: PREVIEW -->
+    <div class="preview-panel">
+        <div class="preview-frame" id="previewFrame">
+            <div class="placeholder-text" id="placeholderText">
+                Choose an image below to start your post
+            </div>
+        </div>
+        <input type="file" id="imageInput" accept="image/*">
+    </div>
+
+    <!-- RIGHT: TOOLS -->
+    <div class="tools-panel">
+        <div class="tools-title">Inkuru yawe</div>
+
+        <button class="tool-btn" id="btnAddText">
+            <span class="tool-icon">Aa</span> Add text
+        </button>
+
+        <button class="tool-btn" id="btnAddMusic">
+            <span class="tool-icon">&#9835;</span> Add music
+        </button>
+
+        <button class="tool-btn" id="btnAddTime">
+            <span class="tool-icon">&#128337;</span> Add time
+        </button>
+
+        <div class="panel-section">
+            <label for="altTextInput" style="font-size:13px; color:#aeb8bd;">Alternative text</label>
+            <textarea id="altTextInput" placeholder="Describe this photo for people using screen readers"></textarea>
+        </div>
+
+        <div class="panel-section toggle-row">
+            <span>AI-generated content</span>
+            <label class="switch">
+                <input type="checkbox" id="aiLabelToggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <!-- TEXT TOOL PANEL -->
+        <div class="panel-section" id="textPanel" style="display:none;">
+            <input type="text" id="textToAddInput" placeholder="Type your text">
+            <button class="small-btn" id="btnPlaceText">Add to photo</button>
+        </div>
+
+        <!-- MUSIC TOOL PANEL -->
+        <div class="panel-section" id="musicPanel" style="display:none;">
+            <input type="text" id="musicSearchInput" placeholder="Search a song or artist">
+            <div class="status-text" id="musicStatus"></div>
+            <div id="musicResults"></div>
+            <div class="lyrics-box" id="lyricsBox" style="display:none;"></div>
+        </div>
+
+        <button class="share-btn" id="btnShare" disabled>Share</button>
+    </div>
+
+</div>
+
+<script>
+/* =========================================================
+   STATE
+   ========================================================= */
+let selectedImageDataUrl = null;
+let selectedSong = null; // { title, artist, artworkUrl, previewUrl }
+let musicSearchTimer = null;
+
+const previewFrame   = document.getElementById("previewFrame");
+const placeholderText = document.getElementById("placeholderText");
+const imageInput     = document.getElementById("imageInput");
+const btnShare        = document.getElementById("btnShare");
+
+/* =========================================================
+   1. IMAGE SELECTION
+   ========================================================= */
+imageInput.addEventListener("change", function (e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (ev) {
+        selectedImageDataUrl = ev.target.result;
+
+        previewFrame.innerHTML = "";
+        const img = document.createElement("img");
+        img.src = selectedImageDataUrl;
+        previewFrame.appendChild(img);
+
+        btnShare.disabled = false;
+    };
+    reader.readAsDataURL(file);
+});
+
+/* =========================================================
+   2. ADD TEXT (draggable overlay on the image)
+   ========================================================= */
+const btnAddText   = document.getElementById("btnAddText");
+const textPanel     = document.getElementById("textPanel");
+const textToAddInput = document.getElementById("textToAddInput");
+const btnPlaceText  = document.getElementById("btnPlaceText");
+
+btnAddText.addEventListener("click", function () {
+    hideAllToolPanels();
+    if (!selectedImageDataUrl) {
+        alert("Choose an image first.");
+        return;
+    }
+    textPanel.style.display = "block";
+});
+
+btnPlaceText.addEventListener("click", function () {
+    const value = textToAddInput.value.trim();
+    if (!value) return;
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "text-overlay";
+    wrapper.style.top = "45%";
+    wrapper.style.left = "50%";
+    wrapper.style.transform = "translate(-50%, -50%)";
+
+    const textSpan = document.createElement("span");
+    textSpan.textContent = value;
+    textSpan.contentEditable = "true";
+    textSpan.className = "text-overlay-content";
+
+    const removeBtn = document.createElement("button");
+    removeBtn.className = "text-overlay-remove";
+    removeBtn.textContent = "\u00D7"; // ×
+    removeBtn.title = "Remove text";
+    removeBtn.addEventListener("mousedown", function (e) {
+        e.stopPropagation(); // don't start a drag when clicking the x
+    });
+    removeBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        wrapper.remove();
+    });
+
+    wrapper.appendChild(textSpan);
+    wrapper.appendChild(removeBtn);
+    makeDraggable(wrapper);
+
+    previewFrame.appendChild(wrapper);
+    textToAddInput.value = "";
+});
+
+function makeDraggable(el) {
+    let offsetX = 0, offsetY = 0, dragging = false;
+
+    function startDrag(clientX, clientY) {
+        dragging = true;
+        const rect = el.getBoundingClientRect();
+        offsetX = clientX - rect.left;
+        offsetY = clientY - rect.top;
+        // once dragging starts, position with left/top directly (drop the centering transform)
+        el.style.transform = "none";
+    }
+
+    function moveDrag(clientX, clientY) {
+        if (!dragging) return;
+        const frameRect = previewFrame.getBoundingClientRect();
+        let x = clientX - frameRect.left - offsetX;
+        let y = clientY - frameRect.top - offsetY;
+
+        // keep the text inside the visible photo area
+        x = Math.max(0, Math.min(x, frameRect.width - el.offsetWidth));
+        y = Math.max(0, Math.min(y, frameRect.height - el.offsetHeight));
+
+        el.style.left = x + "px";
+        el.style.top = y + "px";
+    }
+
+    function endDrag() { dragging = false; }
+
+    // mouse support
+    el.addEventListener("mousedown", function (e) {
+        startDrag(e.clientX, e.clientY);
+        e.stopPropagation();
+        e.preventDefault();
+    });
+    document.addEventListener("mousemove", function (e) {
+        moveDrag(e.clientX, e.clientY);
+    });
+    document.addEventListener("mouseup", endDrag);
+
+    // touch support (phones/tablets)
+    el.addEventListener("touchstart", function (e) {
+        const t = e.touches[0];
+        startDrag(t.clientX, t.clientY);
+        e.stopPropagation();
+    }, { passive: true });
+    document.addEventListener("touchmove", function (e) {
+        if (!dragging) return;
+        const t = e.touches[0];
+        moveDrag(t.clientX, t.clientY);
+    }, { passive: true });
+    document.addEventListener("touchend", endDrag);
+}
+
+/* =========================================================
+   3. ADD TIME
+   ========================================================= */
+const btnAddTime = document.getElementById("btnAddTime");
+
+btnAddTime.addEventListener("click", function () {
+    if (!selectedImageDataUrl) {
+        alert("Choose an image first.");
+        return;
+    }
+
+    const existing = previewFrame.querySelector(".time-overlay");
+    if (existing) { existing.remove(); return; } // toggle off
+
+    const el = document.createElement("div");
+    el.className = "time-overlay";
+    const now = new Date();
+    el.textContent = now.toLocaleString([], { hour: "2-digit", minute: "2-digit", day: "numeric", month: "short" });
+    previewFrame.appendChild(el);
+});
+
+/* =========================================================
+   4. ADD MUSIC
+   iTunes Search API -> title, artist, artwork, 30s preview.
+   lyrics.ovh -> lyrics text for the picked song.
+   Both are free, keyless, and callable directly from the browser.
+   ========================================================= */
+const btnAddMusic     = document.getElementById("btnAddMusic");
+const musicPanel      = document.getElementById("musicPanel");
+const musicSearchInput = document.getElementById("musicSearchInput");
+const musicStatus      = document.getElementById("musicStatus");
+const musicResults     = document.getElementById("musicResults");
+const lyricsBox         = document.getElementById("lyricsBox");
+
+btnAddMusic.addEventListener("click", function () {
+    hideAllToolPanels();
+    if (!selectedImageDataUrl) {
+        alert("Choose an image first.");
+        return;
+    }
+    musicPanel.style.display = "block";
+});
+
+musicSearchInput.addEventListener("input", function () {
+    clearTimeout(musicSearchTimer);
+    const term = musicSearchInput.value.trim();
+
+    if (!term) {
+        musicResults.innerHTML = "";
+        musicStatus.textContent = "";
+        return;
+    }
+
+    musicStatus.textContent = "Searching...";
+    musicSearchTimer = setTimeout(function () { searchMusic(term); }, 500);
+});
+
+function searchMusic(term) {
+    const url = "https://itunes.apple.com/search?media=music&limit=8&term=" + encodeURIComponent(term);
+
+    fetch(url)
+        .then(function (res) {
+            if (!res.ok) throw new Error("Network response was not OK");
+            return res.json();
+        })
+        .then(function (data) {
+            renderSongResults(data.results || []);
+        })
+        .catch(function (err) {
+            console.error("Music search failed:", err);
+            musicStatus.textContent = "Couldn't reach the music search service. Check your internet connection.";
+            musicResults.innerHTML = "";
+        });
+}
+
+function renderSongResults(results) {
+    musicResults.innerHTML = "";
+
+    if (results.length === 0) {
+        musicStatus.textContent = "No songs found for that search.";
+        return;
+    }
+
+    musicStatus.textContent = results.length + " result(s):";
+
+    results.forEach(function (track) {
+        const row = document.createElement("div");
+        row.className = "song-result";
+
+        row.innerHTML =
+            '<img src="' + track.artworkUrl60 + '" alt="">' +
+            '<div class="song-info">' +
+                '<div class="title">' + escapeHtml(track.trackName || "Unknown title") + '</div>' +
+                '<div class="artist">' + escapeHtml(track.artistName || "Unknown artist") + '</div>' +
+            '</div>';
+
+        const useBtn = document.createElement("button");
+        useBtn.className = "small-btn secondary";
+        useBtn.textContent = "Use";
+        useBtn.addEventListener("click", function () {
+            // stop every preview clip in the results list before switching to the chosen song
+            musicResults.querySelectorAll("audio").forEach(function (a) { a.pause(); });
+            selectSong(track);
+        });
+
+        row.appendChild(useBtn);
+        musicResults.appendChild(row);
+
+        // 30-second preview so the user can hear it before picking
+        if (track.previewUrl) {
+            const audio = document.createElement("audio");
+            audio.controls = true;
+            audio.src = track.previewUrl;
+            audio.style.width = "100%";
+            audio.style.marginTop = "4px";
+            row.appendChild(audio);
+        }
+    });
+}
+
+let selectedSongAudio = null;
+
+function selectSong(track) {
+    selectedSong = {
+        title: track.trackName,
+        artist: track.artistName,
+        artworkUrl: track.artworkUrl100 || track.artworkUrl60,
+        previewUrl: track.previewUrl
+    };
+
+    // stop whatever song was playing before, if any
+    if (selectedSongAudio) {
+        selectedSongAudio.pause();
+        selectedSongAudio = null;
+    }
+
+    // Put a music badge on the photo itself
+    const existingBadge = previewFrame.querySelector(".music-badge");
+    if (existingBadge) existingBadge.remove();
+
+    const badge = document.createElement("div");
+    badge.className = "music-badge";
+    badge.innerHTML =
+        '<img src="' + selectedSong.artworkUrl + '" alt="">' +
+        '<span class="scroll-text">&#9835; ' + escapeHtml(selectedSong.title) + ' - ' + escapeHtml(selectedSong.artist) + '</span>';
+
+    const toggleBtn = document.createElement("button");
+    toggleBtn.className = "music-toggle-btn";
+    toggleBtn.textContent = "\u23F8"; // pause icon, since it starts playing
+    toggleBtn.title = "Play/pause music";
+    toggleBtn.addEventListener("click", function () {
+        if (!selectedSongAudio) return;
+        if (selectedSongAudio.paused) {
+            selectedSongAudio.play();
+            toggleBtn.textContent = "\u23F8";
+        } else {
+            selectedSongAudio.pause();
+            toggleBtn.textContent = "\u25B6";
+        }
+    });
+    badge.appendChild(toggleBtn);
+
+    previewFrame.appendChild(badge);
+
+    // Auto-play like Instagram stories do the moment a song is picked.
+    // This is allowed by browsers because it happens right inside a click handler.
+    if (selectedSong.previewUrl) {
+        selectedSongAudio = new Audio(selectedSong.previewUrl);
+        selectedSongAudio.loop = true;
+        selectedSongAudio.play().catch(function (err) {
+            console.warn("Autoplay was blocked by the browser:", err);
+            toggleBtn.textContent = "\u25B6"; // show a play icon so the user can start it manually
+        });
+    }
+
+    fetchLyrics(selectedSong.artist, selectedSong.title);
+}
+
+function fetchLyrics(artist, title) {
+    lyricsBox.style.display = "block";
+    lyricsBox.textContent = "Looking up lyrics...";
+
+    const url = "https://api.lyrics.ovh/v1/" + encodeURIComponent(artist) + "/" + encodeURIComponent(title);
+
+    fetch(url)
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+            if (data.lyrics) {
+                lyricsBox.textContent = data.lyrics;
+            } else {
+                lyricsBox.textContent = "No lyrics found for this song.";
+            }
+        })
+        .catch(function (err) {
+            console.error("Lyrics lookup failed:", err);
+            lyricsBox.textContent = "Couldn't load lyrics right now.";
+        });
+}
+
+function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+/* =========================================================
+   Helper: only one tool panel open at a time
+   ========================================================= */
+function hideAllToolPanels() {
+    textPanel.style.display = "none";
+    musicPanel.style.display = "none";
+}
+
+/* =========================================================
+   5. SHARE / SAVE POST
+   Stored the same way profile.html already reads posts from:
+   localStorage key "mychatPosts" (an array of post objects).
+   ========================================================= */
+btnShare.addEventListener("click", function () {
+    if (!selectedImageDataUrl) return;
+
+    const textOverlays = Array.from(previewFrame.querySelectorAll(".text-overlay")).map(function (el) {
+        const content = el.querySelector(".text-overlay-content");
+        return { text: content ? content.textContent : "", top: el.style.top, left: el.style.left };
+    });
+
+    const hasTime = !!previewFrame.querySelector(".time-overlay");
+    const altText = document.getElementById("altTextInput").value.trim();
+    const aiLabel = document.getElementById("aiLabelToggle").checked;
+
+    const post = {
+        image: selectedImageDataUrl,
+        textOverlays: textOverlays,
+        showTimestamp: hasTime,
+        music: selectedSong,       // null if none picked
+        altText: altText,
+        aiGenerated: aiLabel,
+        createdAt: new Date().toISOString()
+    };
+
+    let posts = [];
+    try {
+        posts = JSON.parse(localStorage.getItem("mychatPosts") || "[]");
+        if (!Array.isArray(posts)) posts = [];
+    } catch (e) {
+        posts = [];
+    }
+
+    posts.push(post);
+    localStorage.setItem("mychatPosts", JSON.stringify(posts));
+
+    alert("Post saved! Go to Home or Profile to see it.");
+    // In home.html, redirect instead, e.g.: window.location.href = "home.html";
+});
+</script>
+
+</body>
+</html>

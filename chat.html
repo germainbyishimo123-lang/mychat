@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MyChat - Chat</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            color: white;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #000000 0%,
+                    #061b18 35%,
+                    #082b35 65%,
+                    #11164d 100%
+                );
+
+            background-attachment: fixed;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 900px;
+            height: 100vh;
+            margin: auto;
+
+            display: flex;
+            flex-direction: column;
+
+            background: rgba(0, 0, 0, 0.25);
+        }
+
+        /* HEADER */
+
+        .chat-header {
+            height: 75px;
+
+            display: flex;
+            align-items: center;
+
+            padding: 12px 20px;
+
+            background: rgba(0, 0, 0, 0.55);
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+
+            backdrop-filter: blur(15px);
+        }
+
+        .back {
+            color: white;
+            text-decoration: none;
+            font-size: 27px;
+            margin-right: 15px;
+        }
+
+        .avatar {
+            width: 45px;
+            height: 45px;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: linear-gradient(135deg, #168aad, #3155c7);
+
+            font-weight: bold;
+            margin-right: 12px;
+        }
+
+        .person-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .online {
+            color: #79d7a6;
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
+        /* MESSAGES */
+
+        .messages {
+            flex: 1;
+
+            padding: 25px;
+
+            overflow-y: auto;
+
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .bubble {
+            max-width: 70%;
+
+            padding: 12px 16px;
+
+            border-radius: 18px;
+
+            line-height: 1.4;
+
+            word-wrap: break-word;
+        }
+
+        .received {
+            align-self: flex-start;
+
+            background: rgba(255,255,255,0.10);
+
+            border-bottom-left-radius: 5px;
+        }
+
+        .sent {
+            align-self: flex-end;
+
+            background: linear-gradient(135deg, #168aad, #3155c7);
+
+            border-bottom-right-radius: 5px;
+        }
+
+        /* INPUT */
+
+        .message-form {
+            display: flex;
+            gap: 10px;
+
+            padding: 15px;
+
+            background: rgba(0,0,0,0.55);
+            border-top: 1px solid rgba(255,255,255,0.12);
+
+            backdrop-filter: blur(15px);
+        }
+
+        .message-input {
+            flex: 1;
+
+            padding: 14px 16px;
+
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 25px;
+
+            background: rgba(255,255,255,0.08);
+
+            color: white;
+            outline: none;
+
+            font-size: 15px;
+        }
+
+        .message-input::placeholder {
+            color: #aeb8bd;
+        }
+
+        .send {
+            width: 55px;
+
+            border: none;
+            border-radius: 50%;
+
+            background: linear-gradient(135deg, #168aad, #3155c7);
+
+            color: white;
+            font-size: 20px;
+
+            cursor: pointer;
+        }
+
+        .send:hover {
+            opacity: 0.85;
+        }
+
+        @media (max-width: 600px) {
+
+            .chat-container {
+                width: 100%;
+            }
+
+            .messages {
+                padding: 15px;
+            }
+
+            .bubble {
+                max-width: 82%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="chat-container">
+
+    <!-- HEADER -->
+
+    <header class="chat-header">
+
+        <a href="messages.html" class="back">
+            ←
+        </a>
+
+        <div class="avatar" id="avatar">
+            ?
+        </div>
+
+        <div>
+            <div class="person-name" id="personName">
+                Chat
+            </div>
+
+            <div class="online">
+                ● Online
+            </div>
+        </div>
+
+    </header>
+
+
+    <!-- MESSAGES -->
+
+    <main class="messages" id="messages">
+
+        <div class="bubble received">
+            Hey! 👋
+        </div>
+
+        <div class="bubble received">
+            How are you?
+        </div>
+
+    </main>
+
+
+    <!-- MESSAGE INPUT -->
+
+    <form class="message-form" id="messageForm">
+
+        <input
+            class="message-input"
+            id="messageInput"
+            type="text"
+            placeholder="Type a message..."
+            autocomplete="off"
+        >
+
+        <button class="send" type="submit">
+            ➤
+        </button>
+
+    </form>
+
+</div>
+
+
+<script>
+
+    // Get person from URL
+
+    const params = new URLSearchParams(
+        window.location.search
+    );
+
+    const person =
+        params.get("person") || "Chat";
+
+
+    // Show person's name
+
+    document.getElementById("personName").textContent =
+        person;
+
+    document.getElementById("avatar").textContent =
+        person.charAt(0).toUpperCase();
+
+
+    // Send message
+
+    const form =
+        document.getElementById("messageForm");
+
+    const input =
+        document.getElementById("messageInput");
+
+    const messages =
+        document.getElementById("messages");
+
+
+    form.addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        const text = input.value.trim();
+
+        if (text === "") {
+            return;
+        }
+
+        const bubble =
+            document.createElement("div");
+
+        bubble.className = "bubble sent";
+
+        bubble.textContent = text;
+
+        messages.appendChild(bubble);
+
+        input.value = "";
+
+        messages.scrollTop =
+            messages.scrollHeight;
+
+    });
+
+
+    // Enter sends the message
+
+    input.addEventListener("keydown", function(event) {
+
+        if (
+            event.key === "Enter" &&
+            !event.shiftKey
+        ) {
+
+            event.preventDefault();
+
+            form.dispatchEvent(
+                new Event("submit")
+            );
+        }
+
+    });
+
+</script>
+
+</body>
+</html>

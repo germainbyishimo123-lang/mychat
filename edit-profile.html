@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit Profile - MyChat</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #04141d;
+}
+
+.edit-container {
+    width: 90%;
+    max-width: 500px;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0,100,150,.12);
+}
+
+h1 {
+    text-align: center;
+    color: #039be5;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #c5e9f7;
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+textarea {
+    height: 100px;
+    resize: none;
+}
+
+.save-button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background: #03a9f4;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.save-button:hover {
+    background: #0288d1;
+}
+
+.back {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #039be5;
+    text-decoration: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="edit-container">
+
+    <h1>✏️ Edit Profile</h1>
+
+    <label>Full Name</label>
+    <input type="text" id="name" placeholder="Enter your name">
+
+    <label>Email</label>
+    <input type="email" id="email" placeholder="Enter your email">
+
+    <label>Bio</label>
+    <textarea id="bio" placeholder="Tell people about yourself"></textarea>
+
+    <label>Profile Picture</label>
+    <input type="file" id="profilePicture" accept="image/*">
+    <button class="save-button" onclick="saveProfile()">
+        Save Changes
+    </button>
+
+    <a href="profile.html" class="back">← Back to Profile</a>
+
+</div>
+
+<script>
+
+function saveProfile() {
+
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const bio = document.getElementById("bio").value;
+
+    localStorage.setItem("profileName", name);
+    localStorage.setItem("profileEmail", email);
+    localStorage.setItem("profileBio", bio);
+    const picture = document.getElementById("profilePicture").files[0];
+
+if (picture) {
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+        localStorage.setItem("profilePicture", event.target.result);
+
+        alert("Profile saved successfully!");
+        window.location.href = "profile.html";
+    };
+
+    reader.readAsDataURL(picture);
+} else {
+    alert("Profile saved successfully!");
+    window.location.href = "profile.html";
+}
+    alert("Profile saved successfully!");
+
+    window.location.href = "profile.html";
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MyChat - Login</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            color: white;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #000000 0%,
+                    #061b18 35%,
+                    #082b35 65%,
+                    #11164d 100%
+                );
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            width: 90%;
+            max-width: 400px;
+            padding: 35px;
+
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 25px;
+
+            backdrop-filter: blur(15px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 42px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #b8c5cc;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 8px 0;
+
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+
+            outline: none;
+            font-size: 15px;
+        }
+
+        input::placeholder {
+            color: #aeb8bd;
+        }
+
+        input:focus {
+            border-color: #3fa9f5;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 18px;
+
+            border: none;
+            border-radius: 12px;
+
+            background: linear-gradient(90deg, #168aad, #3155c7);
+            color: white;
+
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+
+            transition: 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .signup {
+            margin-top: 25px;
+            color: #b8c5cc;
+        }
+
+        .signup a {
+            color: #4dafff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .signup a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <div class="logo">MyChat</div>
+
+        <div class="subtitle">
+            Connect. Chat. Share.
+        </div>
+
+        <form action="home.html">
+
+            <input
+                type="email"
+                placeholder="Email"
+                required
+            >
+
+            <input
+                type="password"
+                placeholder="Password"
+                required
+            >
+
+            <button type="submit">
+                Login
+            </button>
+
+        </form>
+
+        <div class="signup">
+            Don't have an account?
+            <a href="signup.html">Sign Up</a>
+        </div>
+
+    </div>
+
+</body>
+</html>

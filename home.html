@@ -1,0 +1,3087 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>MyChat</title>
+
+
+<style>
+
+/* =====================================================
+   BASIC
+===================================================== */
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+
+    font-family:Arial, Helvetica, sans-serif;
+
+    color:white;
+
+    min-height:100vh;
+
+    /* BLACK → DEEP GREEN/BLUE → INDIGO */
+    background:
+        radial-gradient(
+            circle at 15% 30%,
+            rgba(0,120,100,.28),
+            transparent 35%
+        ),
+
+        radial-gradient(
+            circle at 85% 75%,
+            rgba(70,0,180,.30),
+            transparent 40%
+        ),
+
+        linear-gradient(
+            180deg,
+            #070707 0%,
+            #101b20 18%,
+            #063d3d 45%,
+            #123d67 68%,
+            #24105c 100%
+        );
+
+    background-attachment:fixed;
+}
+
+
+/* =====================================================
+   LEFT NAVIGATION
+===================================================== */
+
+.sidebar{
+
+    position:fixed;
+
+    left:0;
+    top:0;
+
+    width:245px;
+    height:100vh;
+
+    padding:28px 15px;
+
+    background:rgba(5,7,9,.88);
+
+    backdrop-filter:blur(20px);
+
+    border-right:1px solid rgba(255,255,255,.10);
+
+    z-index:1000;
+}
+
+.logo{
+
+    font-size:28px;
+
+    font-weight:bold;
+
+    margin:5px 15px 45px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #00e5ff,
+            #00ff99,
+            #8b5cff
+        );
+
+    -webkit-background-clip:text;
+
+    color:transparent;
+}
+
+
+.nav-links{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:7px;
+}
+
+
+.nav-links a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    padding:15px 17px;
+
+    border-radius:15px;
+
+    color:white;
+
+    text-decoration:none;
+
+    font-size:16px;
+
+    transition:.25s;
+}
+
+
+.nav-links a:hover{
+
+    background:rgba(255,255,255,.10);
+
+    transform:translateX(4px);
+}
+
+
+.nav-links a.active{
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0,200,170,.20),
+            rgba(70,60,200,.16)
+        );
+
+    font-weight:bold;
+}
+
+
+.nav-icon{
+
+    font-size:22px;
+
+    width:28px;
+
+    text-align:center;
+}
+
+
+/* =====================================================
+   MAIN AREA
+===================================================== */
+
+.main{
+
+    margin-left:245px;
+
+    width:calc(100% - 245px);
+
+    min-height:100vh;
+
+    padding:25px 35px;
+}
+
+
+.content{
+
+    width:100%;
+
+    max-width:850px;
+
+    margin:0 auto;
+}
+
+
+/* =====================================================
+   TOP BAR
+===================================================== */
+
+.top-bar{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    margin-bottom:18px;
+}
+
+
+.top-title{
+
+    font-size:25px;
+
+    font-weight:bold;
+}
+
+
+.top-actions{
+
+    display:flex;
+
+    gap:8px;
+}
+
+
+.top-btn{
+
+    border:none;
+
+    color:white;
+
+    background:rgba(255,255,255,.08);
+
+    padding:9px 13px;
+
+    border-radius:12px;
+
+    cursor:pointer;
+}
+
+
+/* =====================================================
+   CREATE POST
+===================================================== */
+
+.create-box{
+
+    background:rgba(7,12,15,.78);
+
+    border:1px solid rgba(255,255,255,.11);
+
+    border-radius:18px;
+
+    padding:16px;
+
+    margin-bottom:22px;
+
+    box-shadow:0 15px 45px rgba(0,0,0,.25);
+
+    backdrop-filter:blur(18px);
+}
+
+
+.create-header{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-bottom:12px;
+}
+
+
+.create-avatar{
+
+    width:40px;
+
+    height:40px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-weight:bold;
+
+    background:
+        linear-gradient(
+            135deg,
+            #00a98f,
+            #4b25a8
+        );
+}
+
+
+#postText{
+
+    width:100%;
+
+    min-height:65px;
+
+    resize:none;
+
+    border:none;
+
+    outline:none;
+
+    padding:12px;
+
+    border-radius:13px;
+
+    color:white;
+
+    background:rgba(255,255,255,.06);
+
+    font-size:15px;
+}
+
+
+#postText::placeholder{
+
+    color:#aeb9bd;
+}
+
+
+/* =====================================================
+   CREATE OPTIONS
+===================================================== */
+
+.create-options{
+
+    display:flex;
+
+    gap:8px;
+
+    flex-wrap:wrap;
+
+    margin-top:12px;
+}
+
+
+.create-option{
+
+    border:none;
+
+    padding:9px 12px;
+
+    border-radius:11px;
+
+    color:white;
+
+    background:rgba(255,255,255,.07);
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+
+.create-option:hover{
+
+    background:rgba(0,210,180,.18);
+}
+
+
+/* =====================================================
+   CREATOR TOOLS
+===================================================== */
+
+.tool-panel{
+
+    display:none;
+
+    margin-top:12px;
+
+    padding:14px;
+
+    border-radius:14px;
+
+    background:rgba(0,0,0,.25);
+
+    border:1px solid rgba(255,255,255,.07);
+}
+
+
+.tool-panel input{
+
+    width:100%;
+
+    padding:11px;
+
+    border:none;
+
+    outline:none;
+
+    border-radius:10px;
+
+    background:#111b20;
+
+    color:white;
+}
+
+
+.tool-title{
+
+    font-weight:bold;
+
+    margin-bottom:10px;
+}
+
+
+/* =====================================================
+   EFFECTS
+===================================================== */
+
+.effect-list{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:7px;
+}
+
+
+.effect-btn{
+
+    border:none;
+
+    padding:8px 11px;
+
+    border-radius:10px;
+
+    color:white;
+
+    background:#25333a;
+
+    cursor:pointer;
+}
+
+
+/* =====================================================
+   STICKERS
+===================================================== */
+
+.sticker-list{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:8px;
+}
+
+
+.sticker-btn{
+
+    border:none;
+
+    background:rgba(255,255,255,.08);
+
+    border-radius:10px;
+
+    padding:6px 9px;
+
+    font-size:25px;
+
+    cursor:pointer;
+}
+
+
+/* =====================================================
+   MUSIC
+===================================================== */
+
+.music-search{
+
+    display:flex;
+
+    gap:7px;
+}
+
+
+.music-search button{
+
+    border:none;
+
+    padding:10px 14px;
+
+    border-radius:10px;
+
+    background:#008f7a;
+
+    color:white;
+
+    cursor:pointer;
+}
+
+
+.music-results{
+
+    margin-top:10px;
+}
+
+
+.music-result{
+
+    padding:11px;
+
+    margin-top:8px;
+
+    border-radius:11px;
+
+    background:rgba(255,255,255,.07);
+}
+
+
+.music-result img{
+
+    width:50px;
+
+    height:50px;
+
+    border-radius:8px;
+
+    object-fit:cover;
+
+    float:left;
+
+    margin-right:10px;
+}
+
+
+/* =====================================================
+   MEDIA
+===================================================== */
+
+#mediaInput{
+
+    display:none;
+}
+
+
+.preview{
+
+    margin-top:12px;
+
+    text-align:center;
+}
+
+
+.preview img,
+.preview video{
+
+    max-width:100%;
+
+    max-height:350px;
+
+    border-radius:14px;
+}
+
+
+/* =====================================================
+   PUBLISH BUTTON
+===================================================== */
+
+.publish-btn{
+
+    width:100%;
+
+    margin-top:12px;
+
+    padding:12px;
+
+    border:none;
+
+    border-radius:12px;
+
+    color:white;
+
+    font-size:15px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    background:
+        linear-gradient(
+            90deg,
+            #00a889,
+            #087f9c,
+            #4c27a8
+        );
+}
+
+
+/* =====================================================
+   HOME / REELS SWITCH
+===================================================== */
+
+.section-tabs{
+
+    display:flex;
+
+    gap:5px;
+
+    padding:5px;
+
+    margin-bottom:20px;
+
+    border-radius:14px;
+
+    background:rgba(0,0,0,.28);
+}
+
+
+.section-tab{
+
+    flex:1;
+
+    border:none;
+
+    padding:11px;
+
+    border-radius:10px;
+
+    background:transparent;
+
+    color:#aeb9bd;
+
+    cursor:pointer;
+
+    font-weight:bold;
+}
+
+
+.section-tab.active{
+
+    background:rgba(255,255,255,.10);
+
+    color:white;
+}
+
+
+/* =====================================================
+   POSTS
+===================================================== */
+
+.post{
+
+    background:rgba(7,12,15,.80);
+
+    border:1px solid rgba(255,255,255,.10);
+
+    border-radius:20px;
+
+    padding:18px;
+
+    margin-bottom:20px;
+
+    backdrop-filter:blur(16px);
+
+    box-shadow:0 15px 40px rgba(0,0,0,.25);
+}
+
+
+.post-header{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    margin-bottom:12px;
+}
+
+
+.avatar{
+
+    width:42px;
+
+    height:42px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-weight:bold;
+
+    background:
+        linear-gradient(
+            135deg,
+            #00a98f,
+            #4c27a8
+        );
+}
+
+
+.post-name{
+
+    font-weight:bold;
+}
+
+
+.post-time{
+
+    color:#8f9ca1;
+
+    font-size:12px;
+
+    margin-top:3px;
+}
+
+
+.post-text{
+
+    line-height:1.5;
+
+    margin-bottom:12px;
+
+    white-space:pre-wrap;
+}
+
+
+.post-media{
+
+    width:100%;
+
+    max-height:600px;
+
+    object-fit:cover;
+
+    border-radius:15px;
+
+    display:block;
+}
+
+
+/* =====================================================
+   FILTERS
+===================================================== */
+
+.filter-bright{
+    filter:brightness(1.25);
+}
+
+.filter-dark{
+    filter:brightness(.70);
+}
+
+.filter-gray{
+    filter:grayscale(1);
+}
+
+.filter-vintage{
+    filter:sepia(.45) contrast(1.1);
+}
+
+.filter-cool{
+    filter:saturate(1.2) hue-rotate(15deg);
+}
+
+
+/* =====================================================
+   OVERLAY
+===================================================== */
+
+.media-wrapper{
+
+    position:relative;
+
+    margin-top:10px;
+}
+
+
+.text-overlay{
+
+    position:absolute;
+
+    left:50%;
+
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
+    width:90%;
+
+    text-align:center;
+
+    font-size:30px;
+
+    font-weight:bold;
+
+    color:white;
+
+    text-shadow:
+        0 2px 8px black;
+}
+
+
+.sticker-overlay{
+
+    position:absolute;
+
+    right:18px;
+
+    bottom:18px;
+
+    font-size:45px;
+}
+
+
+/* =====================================================
+   POST ACTIONS
+===================================================== */
+
+.actions{
+
+    display:flex;
+
+    gap:8px;
+
+    margin-top:13px;
+
+    padding-top:12px;
+
+    border-top:1px solid rgba(255,255,255,.07);
+}
+
+
+.action-btn{
+
+    border:none;
+
+    padding:9px 13px;
+
+    border-radius:10px;
+
+    color:white;
+
+    background:rgba(255,255,255,.07);
+
+    cursor:pointer;
+}
+
+
+/* =====================================================
+   COMMENTS
+===================================================== */
+
+.comments{
+
+    margin-top:12px;
+}
+
+
+.comment-box{
+
+    display:flex;
+
+    gap:7px;
+}
+
+
+.comment-box input{
+
+    flex:1;
+
+    padding:10px;
+
+    border:none;
+
+    outline:none;
+
+    border-radius:10px;
+
+    color:white;
+
+    background:#111b20;
+}
+
+
+.comment-box button{
+
+    border:none;
+
+    padding:10px;
+
+    border-radius:10px;
+
+    background:#008f7a;
+
+    color:white;
+
+    cursor:pointer;
+}
+
+
+.comment{
+
+    padding:8px;
+
+    margin-top:7px;
+
+    border-radius:9px;
+
+    background:rgba(255,255,255,.05);
+}
+
+
+/* =====================================================
+   REELS
+===================================================== */
+
+.reels-container{
+
+    display:none;
+}
+
+
+.reel-create{
+
+    background:rgba(7,12,15,.80);
+
+    padding:18px;
+
+    border-radius:18px;
+
+    margin-bottom:20px;
+
+    border:1px solid rgba(255,255,255,.10);
+}
+
+
+.reel-create h2{
+
+    margin-bottom:12px;
+}
+
+
+.reel-create input[type="text"]{
+
+    width:100%;
+
+    padding:11px;
+
+    border:none;
+
+    outline:none;
+
+    border-radius:10px;
+
+    color:white;
+
+    background:#111b20;
+
+    margin-bottom:10px;
+}
+
+
+.reel-create input[type="file"]{
+
+    width:100%;
+
+    color:#bbb;
+
+    margin-bottom:10px;
+}
+
+
+.reel-btn{
+
+    width:100%;
+
+    padding:11px;
+
+    border:none;
+
+    border-radius:11px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #00a889,
+            #4c27a8
+        );
+
+    color:white;
+
+    cursor:pointer;
+
+    font-weight:bold;
+}
+
+
+.reel{
+
+    width:100%;
+
+    min-height:550px;
+
+    max-height:750px;
+
+    background:#050505;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    position:relative;
+
+    margin-bottom:20px;
+
+    border:1px solid rgba(255,255,255,.12);
+}
+
+
+.reel video{
+
+    width:100%;
+
+    height:100%;
+
+    min-height:550px;
+
+    max-height:750px;
+
+    object-fit:cover;
+
+    display:block;
+}
+
+
+.reel-info{
+
+    position:absolute;
+
+    left:15px;
+
+    bottom:20px;
+
+    right:70px;
+
+    text-shadow:0 2px 8px black;
+}
+
+
+.reel-name{
+
+    font-weight:bold;
+
+    margin-bottom:7px;
+}
+
+
+.reel-caption{
+
+    line-height:1.4;
+}
+
+
+.reel-actions{
+
+    position:absolute;
+
+    right:12px;
+
+    bottom:20px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+}
+
+
+.reel-action{
+
+    width:45px;
+
+    height:45px;
+
+    border:none;
+
+    border-radius:50%;
+
+    color:white;
+
+    background:rgba(0,0,0,.55);
+
+    cursor:pointer;
+
+    font-size:18px;
+}
+
+
+/* =====================================================
+   EMPTY STATE
+===================================================== */
+
+.empty{
+
+    text-align:center;
+
+    padding:60px 20px;
+
+    color:#9ca9ae;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:700px){
+
+    .sidebar{
+
+        top:auto;
+
+        bottom:0;
+
+        left:0;
+
+        width:100%;
+
+        height:68px;
+
+        padding:5px;
+
+        border-right:none;
+
+        border-top:1px solid rgba(255,255,255,.12);
+
+        display:flex;
+
+        align-items:center;
+
+        justify-content:center;
+    }
+
+
+    .logo{
+
+        display:none;
+    }
+
+
+    .nav-links{
+
+        width:100%;
+
+        flex-direction:row;
+
+        justify-content:space-around;
+
+        align-items:center;
+
+        gap:0;
+    }
+
+
+    .nav-links a{
+
+        flex-direction:column;
+
+        gap:2px;
+
+        padding:6px 8px;
+
+        font-size:10px;
+    }
+
+
+    .nav-icon{
+
+        font-size:21px;
+    }
+
+
+    .main{
+
+        margin-left:0;
+
+        width:100%;
+
+        padding:15px 10px 85px;
+    }
+
+
+    .top-title{
+
+        font-size:21px;
+    }
+
+
+    .create-box{
+
+        padding:13px;
+
+        border-radius:16px;
+    }
+
+
+    .create-options{
+
+        flex-wrap:nowrap;
+
+        overflow-x:auto;
+    }
+
+
+    .create-option{
+
+        white-space:nowrap;
+
+        font-size:12px;
+    }
+
+
+    .post{
+
+        border-radius:16px;
+
+        padding:14px;
+    }
+
+
+    .reel{
+
+        border-radius:14px;
+
+        min-height:70vh;
+    }
+
+
+    .reel video{
+
+        min-height:70vh;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<nav class="sidebar">
+
+    <div class="logo">
+        MyChat
+    </div>
+
+
+    <div class="nav-links">
+
+        <a href="#" class="active" onclick="showSection('home');return false;">
+
+            <span class="nav-icon">🏠</span>
+
+            <span>Home</span>
+
+        </a>
+
+
+        <a href="messages.html">
+
+            <span class="nav-icon">💬</span>
+
+            <span>Messages</span>
+
+        </a>
+
+
+        <a href="people.html">
+
+            <span class="nav-icon">👥</span>
+
+            <span>People</span>
+
+        </a>
+
+
+        <a href="#" onclick="showSection('reels');return false;">
+
+            <span class="nav-icon">🎬</span>
+
+            <span>Reels</span>
+
+        </a>
+
+
+        <a href="profile.html">
+
+            <span class="nav-icon">👤</span>
+
+            <span>Profile</span>
+
+        </a>
+
+    </div>
+
+</nav>
+
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="main">
+
+<div class="content">
+
+
+<!-- =====================================================
+     TOP
+===================================================== -->
+
+<div class="top-bar">
+
+    <div class="top-title">
+        Home
+    </div>
+
+    <div class="top-actions">
+
+        <button
+        class="top-btn"
+        onclick="showSection('reels')">
+
+        🎬 Reels
+
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     CREATE POST
+===================================================== -->
+
+<div class="create-box">
+
+
+<div class="create-header">
+
+    <div class="create-avatar"
+    id="createAvatar">
+
+        M
+
+    </div>
+
+    <strong>
+        Create a post
+    </strong>
+
+</div>
+
+
+<textarea
+id="postText"
+placeholder="What's happening?">
+</textarea>
+
+
+
+<div class="create-options">
+
+    <button
+    class="create-option"
+    onclick="chooseMedia('image')">
+
+    🖼️ Photo
+
+    </button>
+
+
+    <button
+    class="create-option"
+    onclick="chooseMedia('video')">
+
+    🎥 Video
+
+    </button>
+
+
+    <button
+    class="create-option"
+    onclick="togglePanel('effectsPanel')">
+
+    ✨ Effects
+
+    </button>
+
+
+    <button
+    class="create-option"
+    onclick="togglePanel('textPanel')">
+
+    📝 Text
+
+    </button>
+
+
+    <button
+    class="create-option"
+    onclick="togglePanel('stickerPanel')">
+
+    😀 Sticker
+
+    </button>
+
+
+    <button
+    class="create-option"
+    onclick="togglePanel('musicPanel')">
+
+    🎵 Music
+
+    </button>
+
+</div>
+
+
+<input
+type="file"
+id="mediaInput"
+accept="image/*,video/*"
+onchange="previewMedia()">
+
+
+
+<!-- EFFECTS -->
+
+<div
+class="tool-panel"
+id="effectsPanel">
+
+<div class="tool-title">
+✨ Effects
+</div>
+
+
+<div class="effect-list">
+
+<button
+class="effect-btn"
+onclick="setEffect('normal')">
+Normal
+</button>
+
+<button
+class="effect-btn"
+onclick="setEffect('bright')">
+☀️ Bright
+</button>
+
+<button
+class="effect-btn"
+onclick="setEffect('dark')">
+🌑 Dark
+</button>
+
+<button
+class="effect-btn"
+onclick="setEffect('gray')">
+⚫ B&W
+</button>
+
+<button
+class="effect-btn"
+onclick="setEffect('vintage')">
+📷 Vintage
+</button>
+
+<button
+class="effect-btn"
+onclick="setEffect('cool')">
+❄️ Cool
+</button>
+
+</div>
+
+</div>
+
+
+
+<!-- TEXT -->
+
+<div
+class="tool-panel"
+id="textPanel">
+
+<div class="tool-title">
+📝 Text on media
+</div>
+
+<input
+type="text"
+id="overlayText"
+placeholder="Write text on your photo or video...">
+
+</div>
+
+
+
+<!-- STICKERS -->
+
+<div
+class="tool-panel"
+id="stickerPanel">
+
+<div class="tool-title">
+😀 Stickers
+</div>
+
+
+<div class="sticker-list">
+
+<button
+class="sticker-btn"
+onclick="selectSticker('❤️')">
+❤️
+</button>
+
+<button
+class="sticker-btn"
+onclick="selectSticker('😂')">
+😂
+</button>
+
+<button
+class="sticker-btn"
+onclick="selectSticker('🔥')">
+🔥
+</button>
+
+<button
+class="sticker-btn"
+onclick="selectSticker('😍')">
+😍
+</button>
+
+<button
+class="sticker-btn"
+onclick="selectSticker('⭐')">
+⭐
+</button>
+
+<button
+class="sticker-btn"
+onclick="selectSticker('🎉')">
+🎉
+</button>
+
+<button
+class="sticker-btn"
+onclick="selectSticker('😎')">
+😎
+</button>
+
+<button
+class="sticker-btn"
+onclick="selectSticker('💯')">
+💯
+</button>
+
+</div>
+
+
+<div
+id="selectedSticker"
+style="margin-top:8px;">
+</div>
+
+</div>
+
+
+
+<!-- MUSIC -->
+
+<div
+class="tool-panel"
+id="musicPanel">
+
+<div class="tool-title">
+🎵 Search Music
+</div>
+
+
+<div class="music-search">
+
+<input
+type="text"
+id="musicSearch"
+placeholder="Song or artist...">
+
+
+<button
+onclick="searchMusic()">
+
+Search
+
+</button>
+
+</div>
+
+
+<div
+class="music-results"
+id="musicResults">
+</div>
+
+
+<div
+id="selectedMusic">
+</div>
+
+</div>
+
+
+
+<!-- PREVIEW -->
+
+<div
+class="preview"
+id="mediaPreview">
+</div>
+
+
+
+<button
+class="publish-btn"
+onclick="publishPost()">
+
+🚀 Publish Post
+
+</button>
+
+</div>
+
+
+
+<!-- =====================================================
+     SECTION TABS
+===================================================== -->
+
+<div class="section-tabs">
+
+<button
+class="section-tab active"
+id="homeTab"
+onclick="showSection('home')">
+
+🏠 Home
+
+</button>
+
+
+<button
+class="section-tab"
+id="reelsTab"
+onclick="showSection('reels')">
+
+🎬 Reels
+
+</button>
+
+</div>
+
+
+
+<!-- =====================================================
+     HOME FEED
+===================================================== -->
+
+<section id="homeSection">
+
+<div id="posts"></div>
+
+</section>
+
+
+
+<!-- =====================================================
+     REELS
+===================================================== -->
+
+<section
+class="reels-container"
+id="reelsSection">
+
+
+<!-- CREATE REEL -->
+
+<div class="reel-create">
+
+<h2>
+🎬 Create a Reel
+</h2>
+
+
+<input
+type="text"
+id="reelCaption"
+placeholder="Write a caption for your reel...">
+
+
+<input
+type="file"
+id="reelInput"
+accept="video/*"
+onchange="previewReel()">
+
+
+<div
+id="reelPreview"
+style="margin-bottom:10px;">
+</div>
+
+
+<button
+class="reel-btn"
+onclick="publishReel()">
+
+🚀 Publish Reel
+
+</button>
+
+</div>
+
+
+<!-- REELS FEED -->
+
+<div id="reelsFeed"></div>
+
+</section>
+
+
+</div>
+
+</main>
+
+
+
+<script>
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+let selectedEffect = "normal";
+
+let selectedSticker = "";
+
+let selectedMusic = null;
+
+
+/* =====================================================
+   PROFILE NAME
+===================================================== */
+
+const profileName =
+    localStorage.getItem("profileName")
+    || "MyChat User";
+
+
+document.getElementById("createAvatar")
+.innerText =
+    profileName.charAt(0).toUpperCase();
+
+
+
+/* =====================================================
+   SECTION SWITCH
+===================================================== */
+
+function showSection(section){
+
+    const home =
+        document.getElementById("homeSection");
+
+    const reels =
+        document.getElementById("reelsSection");
+
+    const homeTab =
+        document.getElementById("homeTab");
+
+    const reelsTab =
+        document.getElementById("reelsTab");
+
+
+    if(section === "home"){
+
+        home.style.display = "block";
+
+        reels.style.display = "none";
+
+        homeTab.classList.add("active");
+
+        reelsTab.classList.remove("active");
+
+        document.querySelector(".top-title")
+        .innerText = "Home";
+
+    }
+
+
+    if(section === "reels"){
+
+        home.style.display = "none";
+
+        reels.style.display = "block";
+
+        homeTab.classList.remove("active");
+
+        reelsTab.classList.add("active");
+
+        document.querySelector(".top-title")
+        .innerText = "Reels";
+
+        displayReels();
+
+    }
+
+}
+
+
+/* =====================================================
+   MEDIA CHOICE
+===================================================== */
+
+function chooseMedia(type){
+
+    const input =
+        document.getElementById("mediaInput");
+
+
+    if(type === "image"){
+
+        input.accept = "image/*";
+
+    }
+
+    else{
+
+        input.accept = "video/*";
+
+    }
+
+
+    input.click();
+
+}
+
+
+/* =====================================================
+   TOOL PANELS
+===================================================== */
+
+function togglePanel(id){
+
+    const panel =
+        document.getElementById(id);
+
+
+    if(panel.style.display === "block"){
+
+        panel.style.display = "none";
+
+    }
+
+    else{
+
+        panel.style.display = "block";
+
+    }
+
+}
+
+
+/* =====================================================
+   EFFECT
+===================================================== */
+
+function setEffect(effect){
+
+    selectedEffect = effect;
+
+    previewMedia();
+
+}
+
+
+/* =====================================================
+   STICKER
+===================================================== */
+
+function selectSticker(sticker){
+
+    selectedSticker = sticker;
+
+
+    document.getElementById(
+        "selectedSticker"
+    ).innerHTML =
+        "Selected: " + sticker;
+
+}
+
+
+/* =====================================================
+   PREVIEW MEDIA
+===================================================== */
+
+function previewMedia(){
+
+    const file =
+        document.getElementById("mediaInput")
+        .files[0];
+
+
+    const preview =
+        document.getElementById("mediaPreview");
+
+
+    if(!file){
+
+        preview.innerHTML = "";
+
+        return;
+
+    }
+
+
+    const url =
+        URL.createObjectURL(file);
+
+
+    let filter = "";
+
+
+    if(selectedEffect === "bright")
+        filter = "filter-bright";
+
+    if(selectedEffect === "dark")
+        filter = "filter-dark";
+
+    if(selectedEffect === "gray")
+        filter = "filter-gray";
+
+    if(selectedEffect === "vintage")
+        filter = "filter-vintage";
+
+    if(selectedEffect === "cool")
+        filter = "filter-cool";
+
+
+    const text =
+        document.getElementById("overlayText")
+        .value;
+
+
+    let media;
+
+
+    if(file.type.startsWith("image")){
+
+        media = `
+        <img
+        src="${url}"
+        class="post-media ${filter}">
+        `;
+
+    }
+
+    else{
+
+        media = `
+        <video
+        src="${url}"
+        class="post-media ${filter}"
+        controls>
+        </video>
+        `;
+
+    }
+
+
+    preview.innerHTML = `
+
+    <div class="media-wrapper">
+
+        ${media}
+
+        ${
+            text
+            ?
+            `<div class="text-overlay">
+                ${escapeHTML(text)}
+            </div>`
+            :
+            ""
+        }
+
+        ${
+            selectedSticker
+            ?
+            `<div class="sticker-overlay">
+                ${selectedSticker}
+            </div>`
+            :
+            ""
+        }
+
+    </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   PUBLISH POST
+===================================================== */
+
+function publishPost(){
+
+    const text =
+        document.getElementById("postText")
+        .value.trim();
+
+
+    const file =
+        document.getElementById("mediaInput")
+        .files[0];
+
+
+    if(
+        text === "" &&
+        !file &&
+        !selectedMusic &&
+        !selectedSticker
+    ){
+
+        alert(
+            "Add text, a photo, video, music or sticker first."
+        );
+
+        return;
+
+    }
+
+
+    const post = {
+
+        id:Date.now(),
+
+        name:profileName,
+
+        text:text,
+
+        effect:selectedEffect,
+
+        sticker:selectedSticker,
+
+        overlay:
+            document.getElementById(
+                "overlayText"
+            ).value.trim(),
+
+        music:selectedMusic,
+
+        time:new Date().toLocaleString(),
+
+        media:null,
+
+        type:null
+
+    };
+
+
+    if(file){
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload = function(event){
+
+            post.media =
+                event.target.result;
+
+            post.type =
+                file.type.startsWith("image")
+                ? "image"
+                : "video";
+
+
+            savePost(post);
+
+        };
+
+
+        reader.readAsDataURL(file);
+
+    }
+
+    else{
+
+        savePost(post);
+
+    }
+
+}
+
+
+/* =====================================================
+   SAVE POST
+===================================================== */
+
+function savePost(post){
+
+    let posts =
+        JSON.parse(
+            localStorage.getItem(
+                "mychatPosts"
+            ) || "[]"
+        );
+
+
+    posts.unshift(post);
+
+
+    localStorage.setItem(
+        "mychatPosts",
+        JSON.stringify(posts)
+    );
+
+
+    resetPostComposer();
+
+    displayPosts();
+
+}
+
+
+/* =====================================================
+   RESET POST
+===================================================== */
+
+function resetPostComposer(){
+
+    document.getElementById(
+        "postText"
+    ).value = "";
+
+
+    document.getElementById(
+        "mediaInput"
+    ).value = "";
+
+
+    document.getElementById(
+        "overlayText"
+    ).value = "";
+
+
+    document.getElementById(
+        "mediaPreview"
+    ).innerHTML = "";
+
+
+    document.getElementById(
+        "selectedSticker"
+    ).innerHTML = "";
+
+
+    document.getElementById(
+        "selectedMusic"
+    ).innerHTML = "";
+
+
+    selectedSticker = "";
+
+    selectedMusic = null;
+
+    selectedEffect = "normal";
+
+}
+
+
+/* =====================================================
+   DISPLAY POSTS
+===================================================== */
+
+function displayPosts(){
+
+    const container =
+        document.getElementById("posts");
+
+
+    const posts =
+        JSON.parse(
+            localStorage.getItem(
+                "mychatPosts"
+            ) || "[]"
+        );
+
+
+    container.innerHTML = "";
+
+
+    if(posts.length === 0){
+
+        container.innerHTML = `
+
+        <div class="empty">
+
+            <div style="font-size:45px;">
+                📱
+            </div>
+
+            <h3>
+                Welcome to MyChat
+            </h3>
+
+            <p style="margin-top:8px;">
+                Your posts will appear here.
+            </p>
+
+        </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    posts.forEach(post => {
+
+        const div =
+            document.createElement("article");
+
+
+        div.className = "post";
+
+
+        let mediaHTML = "";
+
+
+        if(post.media){
+
+            let filter = "";
+
+
+            if(post.effect === "bright")
+                filter = "filter-bright";
+
+            if(post.effect === "dark")
+                filter = "filter-dark";
+
+            if(post.effect === "gray")
+                filter = "filter-gray";
+
+            if(post.effect === "vintage")
+                filter = "filter-vintage";
+
+            if(post.effect === "cool")
+                filter = "filter-cool";
+
+
+            if(post.type === "image"){
+
+                mediaHTML = `
+
+                <div class="media-wrapper">
+
+                    <img
+                    src="${post.media}"
+                    class="post-media ${filter}">
+
+                    ${
+                        post.overlay
+                        ?
+                        `<div class="text-overlay">
+                            ${escapeHTML(post.overlay)}
+                        </div>`
+                        :
+                        ""
+                    }
+
+                    ${
+                        post.sticker
+                        ?
+                        `<div class="sticker-overlay">
+                            ${post.sticker}
+                        </div>`
+                        :
+                        ""
+                    }
+
+                </div>
+
+                `;
+
+            }
+
+
+            if(post.type === "video"){
+
+                mediaHTML = `
+
+                <div class="media-wrapper">
+
+                    <video
+                    src="${post.media}"
+                    class="post-media ${filter}"
+                    controls>
+                    </video>
+
+                    ${
+                        post.overlay
+                        ?
+                        `<div class="text-overlay">
+                            ${escapeHTML(post.overlay)}
+                        </div>`
+                        :
+                        ""
+                    }
+
+                    ${
+                        post.sticker
+                        ?
+                        `<div class="sticker-overlay">
+                            ${post.sticker}
+                        </div>`
+                        :
+                        ""
+                    }
+
+                </div>
+
+                `;
+
+            }
+
+        }
+
+
+        let musicHTML = "";
+
+
+        if(post.music){
+
+            musicHTML = `
+
+            <div class="music-result">
+
+                🎵
+
+                <strong>
+                    ${escapeHTML(
+                        post.music.title
+                    )}
+                </strong>
+
+                <br>
+
+                <span>
+                    ${escapeHTML(
+                        post.music.artist
+                    )}
+                </span>
+
+                ${
+                    post.music.preview
+                    ?
+                    `
+                    <audio
+                    controls
+                    style="width:100%;margin-top:8px;">
+
+                    <source
+                    src="${post.music.preview}">
+
+                    </audio>
+                    `
+                    :
+                    ""
+                }
+
+            </div>
+
+            `;
+
+        }
+
+
+        div.innerHTML = `
+
+        <div class="post-header">
+
+            <div class="avatar">
+
+                ${escapeHTML(
+                    post.name
+                    .charAt(0)
+                    .toUpperCase()
+                )}
+
+            </div>
+
+
+            <div>
+
+                <div class="post-name">
+                    ${escapeHTML(post.name)}
+                </div>
+
+                <div class="post-time">
+                    ${escapeHTML(post.time)}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        ${
+            post.text
+            ?
+            `<div class="post-text">
+                ${escapeHTML(post.text)}
+            </div>`
+            :
+            ""
+        }
+
+
+        ${mediaHTML}
+
+
+        ${musicHTML}
+
+
+        <div class="actions">
+
+            <button
+            class="action-btn"
+            onclick="likePost(this)">
+
+            ❤️ Like
+
+            </button>
+
+
+            <button
+            class="action-btn"
+            onclick="openComment(this)">
+
+            💬 Comment
+
+            </button>
+
+        </div>
+
+
+        <div class="comments"></div>
+
+        `;
+
+
+        container.appendChild(div);
+
+    });
+
+}
+
+
+/* =====================================================
+   LIKE
+===================================================== */
+
+function likePost(button){
+
+    if(button.dataset.liked === "true"){
+
+        button.innerHTML = "🤍 Like";
+
+        button.dataset.liked = "false";
+
+    }
+
+    else{
+
+        button.innerHTML = "❤️ Liked";
+
+        button.dataset.liked = "true";
+
+    }
+
+}
+
+
+/* =====================================================
+   COMMENTS
+===================================================== */
+
+function openComment(button){
+
+    const post =
+        button.closest(".post");
+
+
+    const comments =
+        post.querySelector(".comments");
+
+
+    comments.innerHTML = `
+
+    <div class="comment-box">
+
+        <input
+        type="text"
+        placeholder="Write a comment...">
+
+        <button>
+            Send
+        </button>
+
+    </div>
+
+    `;
+
+
+    const input =
+        comments.querySelector("input");
+
+
+    const send =
+        comments.querySelector("button");
+
+
+    send.onclick = function(){
+
+        const value =
+            input.value.trim();
+
+
+        if(value === "")
+            return;
+
+
+        const comment =
+            document.createElement("div");
+
+
+        comment.className = "comment";
+
+
+        comment.innerHTML =
+            "💬 " +
+            escapeHTML(value);
+
+
+        comments.appendChild(comment);
+
+
+        input.value = "";
+
+    };
+
+}
+
+
+/* =====================================================
+   MUSIC SEARCH
+===================================================== */
+
+async function searchMusic(){
+
+    const query =
+        document.getElementById(
+            "musicSearch"
+        ).value.trim();
+
+
+    const results =
+        document.getElementById(
+            "musicResults"
+        );
+
+
+    if(query === ""){
+
+        results.innerHTML =
+            "<p>Type a song or artist.</p>";
+
+        return;
+
+    }
+
+
+    results.innerHTML =
+        "<p>🔎 Searching...</p>";
+
+
+    try{
+
+        const response =
+            await fetch(
+                "https://itunes.apple.com/search?term="
+                +
+                encodeURIComponent(query)
+                +
+                "&entity=song&limit=8"
+            );
+
+
+        const data =
+            await response.json();
+
+
+        results.innerHTML = "";
+
+
+        if(!data.results.length){
+
+            results.innerHTML =
+                "<p>❌ No music found.</p>";
+
+            return;
+
+        }
+
+
+        data.results.forEach(song => {
+
+            const item =
+                document.createElement("div");
+
+
+            item.className =
+                "music-result";
+
+
+            item.innerHTML = `
+
+            <img
+            src="${song.artworkUrl100 || ""}">
+
+
+            <strong>
+                ${escapeHTML(
+                    song.trackName
+                )}
+            </strong>
+
+            <br>
+
+            <span>
+                ${escapeHTML(
+                    song.artistName
+                )}
+            </span>
+
+
+            ${
+                song.previewUrl
+                ?
+                `
+                <audio
+                controls
+                style="width:100%;margin-top:8px;">
+
+                    <source
+                    src="${song.previewUrl}">
+
+                </audio>
+                `
+                :
+                ""
+            }
+
+
+            <br>
+
+
+            <button
+            class="create-option"
+            style="margin-top:8px;"
+            onclick='selectMusic(
+                ${JSON.stringify(song.trackName)},
+                ${JSON.stringify(song.artistName)},
+                ${JSON.stringify(song.previewUrl || "")}
+            )'>
+
+            ➕ Add
+
+            </button>
+
+            <div style="clear:both"></div>
+
+            `;
+
+
+            results.appendChild(item);
+
+        });
+
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+
+        results.innerHTML = `
+
+        <p>
+            ❌ Music search failed.
+        </p>
+
+        <small>
+            Open MyChat using Live Server.
+        </small>
+
+        `;
+
+    }
+
+}
+
+
+/* =====================================================
+   SELECT MUSIC
+===================================================== */
+
+function selectMusic(
+    title,
+    artist,
+    preview
+){
+
+    selectedMusic = {
+
+        title:title,
+
+        artist:artist,
+
+        preview:preview
+
+    };
+
+
+    document.getElementById(
+        "selectedMusic"
+    ).innerHTML = `
+
+    <div class="music-result">
+
+        🎵
+
+        <strong>
+            ${escapeHTML(title)}
+        </strong>
+
+        <br>
+
+        <span>
+            ${escapeHTML(artist)}
+        </span>
+
+        <br>
+
+        <button
+        class="create-option"
+        onclick="removeMusic()"
+        style="margin-top:8px;">
+
+        ❌ Remove
+
+        </button>
+
+    </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   REMOVE MUSIC
+===================================================== */
+
+function removeMusic(){
+
+    selectedMusic = null;
+
+    document.getElementById(
+        "selectedMusic"
+    ).innerHTML = "";
+
+}
+
+
+/* =====================================================
+   CREATE REEL PREVIEW
+===================================================== */
+
+function previewReel(){
+
+    const file =
+        document.getElementById(
+            "reelInput"
+        ).files[0];
+
+
+    const preview =
+        document.getElementById(
+            "reelPreview"
+        );
+
+
+    if(!file){
+
+        preview.innerHTML = "";
+
+        return;
+
+    }
+
+
+    const url =
+        URL.createObjectURL(file);
+
+
+    preview.innerHTML = `
+
+    <video
+    src="${url}"
+    controls
+    style="
+        width:100%;
+        max-height:500px;
+        border-radius:15px;
+    ">
+    </video>
+
+    `;
+
+}
+
+
+/* =====================================================
+   PUBLISH REEL
+===================================================== */
+
+function publishReel(){
+
+    const file =
+        document.getElementById(
+            "reelInput"
+        ).files[0];
+
+
+    const caption =
+        document.getElementById(
+            "reelCaption"
+        ).value.trim();
+
+
+    if(!file){
+
+        alert(
+            "Choose a video for your reel first."
+        );
+
+        return;
+
+    }
+
+
+    const reader =
+        new FileReader();
+
+
+    reader.onload = function(event){
+
+        const reel = {
+
+            id:Date.now(),
+
+            name:profileName,
+
+            caption:caption,
+
+            likes:0,
+
+            comments:[],
+
+            video:event.target.result,
+
+            time:new Date().toLocaleString()
+
+        };
+
+
+        let reels =
+            JSON.parse(
+                localStorage.getItem(
+                    "mychatReels"
+                ) || "[]"
+            );
+
+
+        reels.unshift(reel);
+
+
+        localStorage.setItem(
+            "mychatReels",
+            JSON.stringify(reels)
+        );
+
+
+        document.getElementById(
+            "reelInput"
+        ).value = "";
+
+
+        document.getElementById(
+            "reelCaption"
+        ).value = "";
+
+
+        document.getElementById(
+            "reelPreview"
+        ).innerHTML = "";
+
+
+        displayReels();
+
+    };
+
+
+    reader.readAsDataURL(file);
+
+}
+
+
+/* =====================================================
+   DISPLAY REELS
+===================================================== */
+
+function displayReels(){
+    const container = document.getElementById("reelsFeed");
+    const reels = JSON.parse(localStorage.getItem("mychatReels") || "[]");
+    container.innerHTML = "";
+
+    if(!reels.length){
+        container.innerHTML = `<div class="empty"><div style="font-size:50px;">🎬</div><h3>No reels yet</h3><p style="margin-top:8px;">Choose a video above and publish your first Reel.</p></div>`;
+        return;
+    }
+
+    reels.forEach(reel => {
+        if(!Array.isArray(reel.comments)) reel.comments = [];
+        if(typeof reel.likes !== "number") reel.likes = 0;
+
+        const div = document.createElement("div");
+        div.className = "reel";
+        div.innerHTML = `
+          <video src="${reel.video}" controls loop playsinline preload="metadata"></video>
+          <div class="reel-info">
+            <div class="reel-name">@${escapeHTML(reel.name || "MyChat User")}</div>
+            <div class="reel-caption">${escapeHTML(reel.caption || "")}</div>
+            <div class="reel-comments" id="reel-comments-${reel.id}" style="margin-top:10px;font-size:13px;max-height:90px;overflow:auto;"></div>
+          </div>
+          <div class="reel-actions">
+            <button class="reel-action" onclick="toggleReelLike(${reel.id})" title="Like">❤️<small id="reel-likes-${reel.id}">${reel.likes}</small></button>
+            <button class="reel-action" onclick="addReelComment(${reel.id})" title="Comment">💬</button>
+            <button class="reel-action" onclick="shareReel(${reel.id})" title="Share">↗️</button>
+            <button class="reel-action" onclick="deleteReel(${reel.id})" title="Delete this reel">🗑️</button>
+          </div>`;
+        container.appendChild(div);
+        const commentsBox = div.querySelector(`#reel-comments-${reel.id}`);
+        if(reel.comments.length){
+            commentsBox.innerHTML = reel.comments.slice(-3).map(c => `<div><strong>${escapeHTML(c.name)}:</strong> ${escapeHTML(c.text)}</div>`).join("");
+        }
+    });
+    localStorage.setItem("mychatReels", JSON.stringify(reels));
+}
+
+function getReels(){
+    try { return JSON.parse(localStorage.getItem("mychatReels") || "[]"); }
+    catch(e){ return []; }
+}
+function saveReels(reels){ localStorage.setItem("mychatReels", JSON.stringify(reels)); }
+function toggleReelLike(id){
+    const reels=getReels(); const reel=reels.find(r=>String(r.id)===String(id));
+    if(!reel) return; reel.likes=(Number(reel.likes)||0)+1; saveReels(reels); displayReels();
+}
+function addReelComment(id){
+    const text=prompt("Write your comment:"); if(!text || !text.trim()) return;
+    const reels=getReels(); const reel=reels.find(r=>String(r.id)===String(id));
+    if(!reel) return; if(!Array.isArray(reel.comments)) reel.comments=[];
+    reel.comments.push({name:profileName,text:text.trim(),time:new Date().toISOString()});
+    saveReels(reels); displayReels();
+}
+function shareReel(id){
+    const reels=getReels(); const reel=reels.find(r=>String(r.id)===String(id));
+    if(!reel) return;
+    const shareText=`MyChat Reel by ${reel.name || "MyChat User"}: ${reel.caption || ""}`;
+    if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(shareText).then(()=>alert("Reel caption copied. You can share it with friends." )).catch(()=>prompt("Copy this Reel caption:",shareText));
+    } else { prompt("Copy this Reel caption:",shareText); }
+}
+function deleteReel(id){
+    if(!confirm("Delete this Reel?")) return;
+    saveReels(getReels().filter(r=>String(r.id)!==String(id))); displayReels();
+}
+
+
+/* =====================================================
+   SECURITY / TEXT
+===================================================== */
+
+function escapeHTML(text){
+
+    const div =
+        document.createElement("div");
+
+
+    div.textContent =
+        text || "";
+
+
+    return div.innerHTML;
+
+}
+
+
+/* =====================================================
+   LOAD
+===================================================== */
+
+displayPosts();
+
+displayReels();
+
+</script>
+
+</body>
+
+</html>

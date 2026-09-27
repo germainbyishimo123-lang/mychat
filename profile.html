@@ -1,0 +1,483 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyChat - Profile</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            color: white;
+
+            background: linear-gradient(
+                180deg,
+                #000000 0%,
+                #061b18 35%,
+                #082b35 65%,
+                #11164d 100%
+            );
+
+            background-attachment: fixed;
+        }
+
+        /* DESKTOP SIDEBAR */
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 230px;
+            height: 100vh;
+            padding: 25px 15px;
+
+            background: rgba(0, 0, 0, 0.45);
+            border-right: 1px solid rgba(255,255,255,0.12);
+            backdrop-filter: blur(15px);
+        }
+
+        .logo {
+            font-size: 30px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .nav a {
+            display: block;
+            padding: 15px;
+            margin: 8px 0;
+            border-radius: 12px;
+
+            color: white;
+            text-decoration: none;
+            transition: 0.25s;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            background: rgba(255,255,255,0.12);
+        }
+
+        /* MAIN CONTENT */
+
+        .main {
+            margin-left: 230px;
+            padding: 35px;
+            max-width: 1100px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        .profile-card {
+            padding: 30px;
+            border-radius: 22px;
+
+            background: rgba(0,0,0,0.38);
+            border: 1px solid rgba(255,255,255,0.12);
+            backdrop-filter: blur(15px);
+        }
+
+        .profile-top {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .avatar {
+            width: 140px;
+            height: 140px;
+            flex-shrink: 0;
+
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,0.25);
+
+            background: linear-gradient(135deg, #168aad, #3155c7);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 50px;
+            font-weight: bold;
+            overflow: hidden;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .name {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            overflow-wrap: anywhere;
+        }
+
+        .email {
+            color: #aeb8bd;
+            margin-bottom: 15px;
+            overflow-wrap: anywhere;
+        }
+
+        .bio {
+            color: #e1e8eb;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .edit-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 22px;
+
+            background: linear-gradient(90deg, #168aad, #3155c7);
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+
+            border-radius: 12px;
+            transition: 0.25s;
+        }
+
+        .edit-btn:hover {
+            opacity: 0.85;
+            transform: translateY(-2px);
+        }
+
+        /* PROFILE STATISTICS */
+
+        .stats {
+            display: flex;
+            gap: 35px;
+            margin-top: 30px;
+            padding-top: 25px;
+
+            border-top: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 23px;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            margin-top: 7px;
+            color: #aeb8bd;
+            font-size: 14px;
+        }
+
+        /* POSTS SECTION */
+
+        .posts-section {
+            margin-top: 30px;
+        }
+
+        .section-title {
+            font-size: 23px;
+            font-weight: bold;
+            margin-bottom: 18px;
+        }
+
+        .posts-box {
+            padding: 35px;
+            border-radius: 20px;
+
+            background: rgba(0,0,0,0.30);
+            border: 1px solid rgba(255,255,255,0.10);
+
+            text-align: center;
+            color: #b8c5cc;
+        }
+
+        .posts-icon {
+            font-size: 45px;
+            margin-bottom: 15px;
+        }
+
+        .create-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 20px;
+
+            background: rgba(255,255,255,0.10);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+
+            color: white;
+            text-decoration: none;
+        }
+
+        .create-link:hover {
+            background: rgba(255,255,255,0.18);
+        }
+
+        /* MOBILE NAVIGATION */
+
+        .bottom-nav {
+            display: none;
+        }
+
+        @media (max-width: 750px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 20px;
+                padding-bottom: 95px;
+            }
+
+            .page-title {
+                font-size: 28px;
+            }
+
+            .profile-card {
+                padding: 22px;
+            }
+
+            .profile-top {
+                flex-direction: column;
+                text-align: center;
+                gap: 18px;
+            }
+
+            .avatar {
+                width: 115px;
+                height: 115px;
+                font-size: 42px;
+            }
+
+            .name {
+                font-size: 24px;
+            }
+
+            .stats {
+                justify-content: center;
+                gap: 30px;
+            }
+
+            .bottom-nav {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+
+                display: flex;
+                width: 100%;
+                height: 65px;
+
+                background: rgba(0,0,0,0.80);
+                backdrop-filter: blur(15px);
+                border-top: 1px solid rgba(255,255,255,0.12);
+
+                z-index: 100;
+            }
+
+            .bottom-nav a {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                color: white;
+                text-decoration: none;
+                font-size: 22px;
+            }
+
+            .bottom-nav a.active {
+                background: rgba(255,255,255,0.12);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- DESKTOP SIDEBAR -->
+
+    <aside class="sidebar">
+        <div class="logo">MyChat</div>
+
+        <nav class="nav">
+            <a href="home.html">🏠 Home</a>
+            <a href="messages.html">💬 Messages</a>
+            <a href="people.html">👥 People</a>
+            <a href="home.html#reels">🎬 Reels</a>
+            <a href="profile.html" class="active">👤 Profile</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN PROFILE -->
+
+    <main class="main">
+
+        <div class="page-title">My Profile</div>
+
+        <section class="profile-card">
+
+            <div class="profile-top">
+
+                <div class="avatar" id="profileAvatar">
+                    <span id="avatarLetter">U</span>
+                </div>
+
+                <div class="profile-info">
+
+                    <div class="name" id="profileName">
+                        MyChat User
+                    </div>
+
+                    <div class="email" id="profileEmail">
+                        No email added
+                    </div>
+
+                    <div class="bio" id="profileBio">
+                        Welcome to my MyChat profile!
+                    </div>
+
+                    <a href="edit-profile.html" class="edit-btn">
+                        ✏️ Edit Profile
+                    </a>
+
+                </div>
+
+            </div>
+
+            <div class="stats">
+
+                <div class="stat">
+                    <div class="stat-number" id="postCount">0</div>
+                    <div class="stat-label">Posts</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Followers</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Following</div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- POSTS -->
+
+        <section class="posts-section">
+
+            <div class="section-title">My Posts</div>
+
+            <div class="posts-box">
+
+                <div class="posts-icon">📸</div>
+
+                <div id="postsMessage">
+                    Your posts will appear on your Home feed.
+                </div>
+
+                <a href="home.html" class="create-link">
+                    🏠 Go to Home
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- MOBILE NAVIGATION -->
+
+    <nav class="bottom-nav">
+        <a href="home.html">🏠</a>
+        <a href="messages.html">💬</a>
+        <a href="people.html">👥</a>
+        <a href="home.html#reels">🎬</a>
+        <a href="profile.html" class="active">👤</a>
+    </nav>
+
+    <script>
+        // Load saved profile information
+
+        const name =
+            localStorage.getItem("profileName") || "MyChat User";
+
+        const email =
+            localStorage.getItem("profileEmail") || "No email added";
+
+        const bio =
+            localStorage.getItem("profileBio") ||
+            "Welcome to my MyChat profile!";
+
+        const picture =
+            localStorage.getItem("profilePicture");
+
+        document.getElementById("profileName").textContent = name;
+        document.getElementById("profileEmail").textContent = email;
+        document.getElementById("profileBio").textContent = bio;
+
+        document.getElementById("avatarLetter").textContent =
+            name.charAt(0).toUpperCase();
+
+        // Show profile picture if available
+
+        if (picture) {
+            const avatar = document.getElementById("profileAvatar");
+            avatar.innerHTML = "";
+
+            const img = document.createElement("img");
+            img.src = picture;
+            img.alt = "Profile picture";
+
+            avatar.appendChild(img);
+        }
+
+        // Count saved posts
+
+        try {
+            const savedPosts =
+                JSON.parse(localStorage.getItem("mychatPosts") || "[]");
+
+            const count =
+                Array.isArray(savedPosts) ? savedPosts.length : 0;
+
+            document.getElementById("postCount").textContent = count;
+
+            if (count > 0) {
+                document.getElementById("postsMessage").textContent =
+                    "You have " + count +
+                    " post(s) saved on this browser. View them on Home.";
+            }
+        } catch (error) {
+            document.getElementById("postCount").textContent = "0";
+        }
+    </script>
+
+</body>
+</html>

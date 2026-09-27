@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MyChat - Messages</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            color: white;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #000000 0%,
+                    #061b18 35%,
+                    #082b35 65%,
+                    #11164d 100%
+                );
+
+            background-attachment: fixed;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+
+            width: 230px;
+            height: 100vh;
+
+            padding: 25px 15px;
+
+            background: rgba(0, 0, 0, 0.45);
+            border-right: 1px solid rgba(255, 255, 255, 0.12);
+
+            backdrop-filter: blur(15px);
+        }
+
+        .logo {
+            font-size: 30px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .nav a {
+            display: block;
+
+            padding: 15px;
+            margin: 8px 0;
+
+            border-radius: 12px;
+
+            color: white;
+            text-decoration: none;
+
+            transition: 0.25s;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        /* MAIN */
+
+        .main {
+            margin-left: 230px;
+            padding: 35px;
+
+            max-width: 850px;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        .search {
+            width: 100%;
+            padding: 15px;
+
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+
+            outline: none;
+            margin-bottom: 20px;
+        }
+
+        .search::placeholder {
+            color: #aeb8bd;
+        }
+
+        /* CHAT LIST */
+
+        .chat-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .chat {
+            display: flex;
+            align-items: center;
+
+            padding: 15px;
+
+            border-radius: 16px;
+
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+
+            text-decoration: none;
+            color: white;
+
+            transition: 0.25s;
+        }
+
+        .chat:hover {
+            background: rgba(255, 255, 255, 0.10);
+            transform: translateX(3px);
+        }
+
+        .avatar {
+            width: 55px;
+            height: 55px;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin-right: 15px;
+
+            background: linear-gradient(135deg, #168aad, #3155c7);
+
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+        .chat-info {
+            flex: 1;
+        }
+
+        .name {
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .message {
+            color: #aeb8bd;
+            font-size: 14px;
+
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .time {
+            color: #8e9ba1;
+            font-size: 12px;
+        }
+
+        /* MOBILE NAVIGATION */
+
+        .bottom-nav {
+            display: none;
+        }
+
+        @media (max-width: 700px) {
+
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 20px;
+                padding-bottom: 90px;
+            }
+
+            .title {
+                font-size: 28px;
+            }
+
+            .bottom-nav {
+                position: fixed;
+                display: flex;
+
+                bottom: 0;
+                left: 0;
+
+                width: 100%;
+                height: 65px;
+
+                background: rgba(0, 0, 0, 0.75);
+                backdrop-filter: blur(15px);
+
+                border-top: 1px solid rgba(255, 255, 255, 0.12);
+
+                z-index: 100;
+            }
+
+            .bottom-nav a {
+                flex: 1;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                color: white;
+                text-decoration: none;
+
+                font-size: 22px;
+            }
+
+            .bottom-nav a.active {
+                background: rgba(255, 255, 255, 0.10);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">MyChat</div>
+
+        <nav class="nav">
+
+            <a href="home.html">🏠 Home</a>
+
+            <a href="messages.html" class="active">
+                💬 Messages
+            </a>
+
+            <a href="people.html">
+                👥 People
+            </a>
+
+            <a href="home.html#reels">
+                🎬 Reels
+            </a>
+
+            <a href="profile.html">
+                👤 Profile
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+        <div class="title">
+            Messages
+        </div>
+
+        <input
+            class="search"
+            type="text"
+            placeholder="🔎 Search messages..."
+            oninput="searchChats(this.value)"
+        >
+
+        <div class="chat-list" id="chatList">
+
+            <a class="chat" href="chat.html?person=Alex">
+
+                <div class="avatar">A</div>
+
+                <div class="chat-info">
+
+                    <div class="name">
+                        Alex
+                    </div>
+
+                    <div class="message">
+                        Hey! How are you?
+                    </div>
+
+                </div>
+
+                <div class="time">
+                    10:30
+                </div>
+
+            </a>
+
+
+            <a class="chat" href="chat.html?person=Sarah">
+
+                <div class="avatar">S</div>
+
+                <div class="chat-info">
+
+                    <div class="name">
+                        Sarah
+                    </div>
+
+                    <div class="message">
+                        See you tomorrow!
+                    </div>
+
+                </div>
+
+                <div class="time">
+                    09:15
+                </div>
+
+            </a>
+
+
+            <a class="chat" href="chat.html?person=David">
+
+                <div class="avatar">D</div>
+
+                <div class="chat-info">
+
+                    <div class="name">
+                        David
+                    </div>
+
+                    <div class="message">
+                        Check this out 🔥
+                    </div>
+
+                </div>
+
+                <div class="time">
+                    Yesterday
+                </div>
+
+            </a>
+
+
+            <a class="chat" href="chat.html?person=Emma">
+
+                <div class="avatar">E</div>
+
+                <div class="chat-info">
+
+                    <div class="name">
+                        Emma
+                    </div>
+
+                    <div class="message">
+                        Thanks!
+                    </div>
+
+                </div>
+
+                <div class="time">
+                    Monday
+                </div>
+
+            </a>
+
+        </div>
+
+    </main>
+
+
+    <!-- MOBILE NAV -->
+
+    <nav class="bottom-nav">
+
+        <a href="home.html">🏠</a>
+
+        <a href="messages.html" class="active">💬</a>
+
+        <a href="people.html">👥</a>
+
+        <a href="home.html#reels">🎬</a>
+
+        <a href="profile.html">👤</a>
+
+    </nav>
+
+
+    <script>
+
+        function searchChats(value) {
+
+            value = value.toLowerCase();
+
+            const chats = document.querySelectorAll(".chat");
+
+            chats.forEach(chat => {
+
+                const name =
+                    chat.querySelector(".name")
+                    .textContent
+                    .toLowerCase();
+
+                const message =
+                    chat.querySelector(".message")
+                    .textContent
+                    .toLowerCase();
+
+                if (
+                    name.includes(value) ||
+                    message.includes(value)
+                ) {
+                    chat.style.display = "flex";
+                } else {
+                    chat.style.display = "none";
+                }
+
+            });
+
+        }
+
+    </script>
+
+</body>
+</html>

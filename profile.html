@@ -423,60 +423,37 @@
     </nav>
 
     <script>
-        // Load saved profile information
+        // Load profile information from the server
 
-        const name =
-            localStorage.getItem("profileName") || "MyChat User";
+        fetch("http://localhost:3000/api/profile")
+            .then(function (res) { return res.json(); })
+            .then(function (profile) {
+                const name = profile.name || "MyChat User";
+                const email = profile.email || "No email added";
+                const bio = profile.bio || "Welcome to my MyChat profile!";
+                const picture = profile.picture;
 
-        const email =
-            localStorage.getItem("profileEmail") || "No email added";
+                document.getElementById("profileName").textContent = name;
+                document.getElementById("profileEmail").textContent = email;
+                document.getElementById("profileBio").textContent = bio;
 
-        const bio =
-            localStorage.getItem("profileBio") ||
-            "Welcome to my MyChat profile!";
+                document.getElementById("avatarLetter").textContent =
+                    name.charAt(0).toUpperCase();
 
-        const picture =
-            localStorage.getItem("profilePicture");
+                if (picture) {
+                   const avatar = document.getElementById("profileAvatar");
+                   avatar.innerHTML = "";
 
-        document.getElementById("profileName").textContent = name;
-        document.getElementById("profileEmail").textContent = email;
-        document.getElementById("profileBio").textContent = bio;
+                   const img = document.createElement("img");
+                   img.src = picture;
+                   img.alt = "Profile picture";
 
-        document.getElementById("avatarLetter").textContent =
-            name.charAt(0).toUpperCase();
-
-        // Show profile picture if available
-
-        if (picture) {
-            const avatar = document.getElementById("profileAvatar");
-            avatar.innerHTML = "";
-
-            const img = document.createElement("img");
-            img.src = picture;
-            img.alt = "Profile picture";
-
-            avatar.appendChild(img);
-        }
-
-        // Count saved posts
-
-        try {
-            const savedPosts =
-                JSON.parse(localStorage.getItem("mychatPosts") || "[]");
-
-            const count =
-                Array.isArray(savedPosts) ? savedPosts.length : 0;
-
-            document.getElementById("postCount").textContent = count;
-
-            if (count > 0) {
-                document.getElementById("postsMessage").textContent =
-                    "You have " + count +
-                    " post(s) saved on this browser. View them on Home.";
+                   avatar.appendChild(img);
             }
-        } catch (error) {
-            document.getElementById("postCount").textContent = "0";
-        }
+    })
+    .catch(function (err) {
+        console.error("Could not load profile from server:", err);
+    });
     </script>
 
 </body>

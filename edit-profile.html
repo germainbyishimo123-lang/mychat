@@ -105,38 +105,51 @@ textarea {
 
 <script>
 
-function saveProfile() {
+function readFileAsDataURL(file) {
+    return new Promise(function (resolve, reject) {
+        const reader = new FileReader();
+        reader.onload = function (event) { resolve(event.target.result); };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+async function saveProfile() {
 
     const name = document.getElementById("name").value;
     const email = document.getElementById("email").value;
     const bio = document.getElementById("bio").value;
+    const file = document.getElementById("profilePicture").files[0];
 
-    localStorage.setItem("profileName", name);
-    localStorage.setItem("profileEmail", email);
-    localStorage.setItem("profileBio", bio);
-    const picture = document.getElementById("profilePicture").files[0];
+    try {
+        // get the current saved profile first, so we don't lose the existing
+        // picture if the user didn't pick a new one this time
+        const currentRes = await fetch("http://localhost:3000/api/profile");
+        const current = await currentRes.json();
 
-if (picture) {
-    const reader = new FileReader();
+        let picture = current.picture || null;
 
-    reader.onload = function(event) {
-        localStorage.setItem("profilePicture", event.target.result);
+        if (file) {
+            picture = await readFileAsDataURL(file);
+        }
+
+        const profile = { name: name, email: email, bio: bio, picture: picture };
+
+        await fetch("http://localhost:3000/api/profile", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(profile)
+        });
 
         alert("Profile saved successfully!");
         window.location.href = "profile.html";
-    };
 
-    reader.readAsDataURL(picture);
-} else {
-    alert("Profile saved successfully!");
-    window.location.href = "profile.html";
-}
-    alert("Profile saved successfully!");
-
-    window.location.href = "profile.html";
+    } catch (err) {
+        console.error("Could not save profile:", err);
+        alert("Could not save profile. Is the server running?");
+    }
 }
 
 </script>
-
 </body>
 </html>

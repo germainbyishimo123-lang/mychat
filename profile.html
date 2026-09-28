@@ -423,38 +423,55 @@
     </nav>
 
     <script>
-        // Load profile information from the server
+    // Load profile information from the server
 
-        fetch("http://localhost:3000/api/profile")
-            .then(function (res) { return res.json(); })
-            .then(function (profile) {
-                const name = profile.name || "MyChat User";
-                const email = profile.email || "No email added";
-                const bio = profile.bio || "Welcome to my MyChat profile!";
-                const picture = profile.picture;
+    fetch("http://localhost:3000/api/profile")
+        .then(function (res) { return res.json(); })
+        .then(function (profile) {
+            const name = profile.name || "MyChat User";
+            const email = profile.email || "No email added";
+            const bio = profile.bio || "Welcome to my MyChat profile!";
+            const picture = profile.picture;
 
-                document.getElementById("profileName").textContent = name;
-                document.getElementById("profileEmail").textContent = email;
-                document.getElementById("profileBio").textContent = bio;
+            document.getElementById("profileName").textContent = name;
+            document.getElementById("profileEmail").textContent = email;
+            document.getElementById("profileBio").textContent = bio;
 
-                document.getElementById("avatarLetter").textContent =
-                    name.charAt(0).toUpperCase();
+            document.getElementById("avatarLetter").textContent =
+                name.charAt(0).toUpperCase();
 
-                if (picture) {
-                   const avatar = document.getElementById("profileAvatar");
-                   avatar.innerHTML = "";
+            if (picture) {
+               const avatar = document.getElementById("profileAvatar");
+               avatar.innerHTML = "";
 
-                   const img = document.createElement("img");
-                   img.src = picture;
-                   img.alt = "Profile picture";
+               const img = document.createElement("img");
+               img.src = picture;
+               img.alt = "Profile picture";
 
-                   avatar.appendChild(img);
+               avatar.appendChild(img);
             }
-    })
-    .catch(function (err) {
-        console.error("Could not load profile from server:", err);
-    });
-    </script>
+        })
+        .catch(function (err) {
+            console.error("Could not load profile from server:", err);
+        });
 
+    // Count saved posts
+
+    fetch("http://localhost:3000/api/posts")
+        .then(function (res) { return res.json(); })
+        .then(function (savedPosts) {
+            const count = Array.isArray(savedPosts) ? savedPosts.length : 0;
+            document.getElementById("postCount").textContent = count;
+
+            if (count > 0) {
+                document.getElementById("postsMessage").textContent =
+                    "You have " + count + " post(s) saved. View them on Home.";
+            }
+        })
+        .catch(function (err) {
+            console.error("Could not load post count:", err);
+            document.getElementById("postCount").textContent = "0";
+        });
+</script>
 </body>
 </html>
